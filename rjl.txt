@@ -1,0 +1,79 @@
+
+        private string captchaText;
+        private Random random = new Random();
+        private void button6_Click(object sender, EventArgs e)
+        {
+            string username = txtUsername.Text;
+            string password = txtPassword.Text;
+            if (username == "user" && password == "user")
+            {
+                Form1 form1 = new Form1();
+                form1.Show();
+                this.Hide();
+            }
+            else
+            {
+                this.Width += 400; 
+                GenerateCaptcha();
+                txtUsername.Clear();
+                txtPassword.Clear();
+            }
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            GenerateCaptcha();
+        }
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (txtCaptcha.Text == captchaText)
+            {
+                MessageBox.Show("Капча введена правильно!", "Успех", 
+MessageBoxButtons.OK, MessageBoxIcon.Information);
+                this.Width -= 400; 
+                txtCaptcha.Clear();
+            }
+            else
+            {
+                MessageBox.Show("Неправильная капча. Попробуйте снова."
+, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                GenerateCaptcha();
+                txtCaptcha.Clear();
+            }
+        }
+        private void GenerateCaptcha()
+        {
+            captchaText = GenerateRandomString(6);
+            DrawCaptcha(captchaText);
+        }
+        private string GenerateRandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghij
+klmnopqrstuvwxyz0123456789АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩ
+ЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюя";
+            StringBuilder result = new StringBuilder();
+            for (int i = 0; i < length; i++)
+            {
+                result.Append(chars[random.Next(chars.Length)]);
+            }
+            return result.ToString();
+        }
+private void DrawCaptcha(string text)
+ {
+     Bitmap bitmap = new Bitmap(200, 50);
+     using (Graphics g = Graphics.FromImage(bitmap))
+     {
+         g.Clear(Color.White);
+         Font font = new Font("Arial", 24, FontStyle.Bold);
+
+         Random heightRandom = new Random();
+         for (int i = 0; i < text.Length; i++)
+         {
+             float yOffset = heightRandom.Next(-10, 10);
+             float xOffset = 30 * i; 
+             g.DrawString(text[i].ToString(), font, Brushes.Black, 
+new PointF(xOffset, 10 + yOffset));
+         }
+         g.DrawLine(new Pen(Color.Red, 2), 0, 25, bitmap.Width, 25);
+     }
+     captchaLabel.Image = bitmap; 
+ }
